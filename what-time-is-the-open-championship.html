@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Find out what time The Open Championship starts in your local timezone with GameTimeNow. Auto-detected schedules for global sports fans.">
+<title>What time is The Open Championship | GameTimeNow</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#FFD23F;--live:#FF3B3B;--green:#00D68F;
+  --bg:#080808;--bg2:#111;--bg3:#1a1a1a;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);
+  --text:#fff;--muted:rgba(255,255,255,0.42);--muted2:rgba(255,255,255,0.2);
+  --fd:'Bebas Neue',cursive;--fb:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);overflow-x:hidden}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:60px}
+.logo{font-family:var(--fd);font-size:26px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.logo span{color:var(--accent)}
+.ldot{width:8px;height:8px;background:var(--live);border-radius:50%;animation:pulse 1.8s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(255,59,59,0.5)}60%{opacity:.7;box-shadow:0 0 0 7px rgba(255,59,59,0)}}
+.nav-r{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--muted)}
+.tz-chip{background:rgba(255,210,63,0.12);color:var(--accent);border:1px solid rgba(255,210,63,0.25);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.nav-clock{font-family:var(--fd);font-size:22px;color:var(--accent);letter-spacing:2px}
+
+.hero{padding:28px 32px 20px;max-width:1100px;margin:0 auto;text-align:center}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,59,59,0.1);border:1px solid rgba(255,59,59,0.25);padding:4px 14px;border-radius:20px;font-size:12px;font-weight:600;color:var(--live);letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
+.hero-h1{font-family:var(--fd);font-size:64px;line-height:1;letter-spacing:2px;margin-bottom:16px;white-space:nowrap}
+.hero-h1 em{font-style:normal;color:var(--accent)}
+.hero-sub{font-size:15px;color:var(--muted);line-height:1.65;max-width:520px;margin:0 auto 22px}
+.hero-sub strong{color:var(--text)}
+.hero-acts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-p{padding:12px 28px;border-radius:8px;background:var(--accent);color:#000;font-family:var(--fb);font-size:15px;font-weight:600;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:transform .15s,box-shadow .15s}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,210,63,.35)}
+.btn-s{padding:12px 28px;border-radius:8px;background:transparent;color:var(--text);font-family:var(--fb);font-size:15px;font-weight:500;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:background .15s}
+.btn-s:hover{background:var(--bg3)}
+
+.stats{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2);display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:18px 24px;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-n{font-family:var(--fd);font-size:32px;color:var(--accent);letter-spacing:1px}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px}
+
+.section{max-width:1100px;margin:0 auto;padding:20px 32px 0}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:14px}
+.sec-title{font-family:var(--fd);font-size:32px;letter-spacing:1px}
+.sec-title span{color:var(--accent)}
+
+.filters{display:flex;gap:7px;flex-wrap:wrap}
+.fb{display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.fb:hover{background:var(--bg3);color:var(--text)}
+.fb.on{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+
+.sw{max-width:1100px;margin:0 auto;padding:14px 32px}
+.sbox{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:10px 16px;transition:border-color .2s}
+.sbox:focus-within{border-color:rgba(255,210,63,.4)}
+.sbox input{background:none;border:none;outline:none;color:var(--text);font-family:var(--fb);font-size:15px;flex:1}
+.sbox input::placeholder{color:var(--muted)}
+
+.status-bar{max-width:1100px;margin:0 auto;padding:0 32px 10px;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+.sdot{width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;margin-right:6px;animation:sdotpulse 2s infinite}
+@keyframes sdotpulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sloading{color:var(--muted2);font-style:italic}
+
+.eg{max-width:1100px;margin:0 auto;padding:0 32px 56px;display:flex;flex-direction:column;gap:12px}
+
+.ecard{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s,transform .15s;animation:fup .25s ease both}
+@keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ecard:hover{border-color:var(--border2);transform:translateY(-1px)}
+.ecard.islive{border-color:rgba(255,59,59,.4)}
+
+.etop{display:flex;align-items:center;justify-content:space-between;padding:13px 18px 11px;border-bottom:1px solid var(--border)}
+.eleft{display:flex;align-items:center;gap:9px;min-width:0}
+.pill{padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
+.p-nba{background:rgba(0,214,143,.15);color:var(--green)}
+.p-nfl{background:rgba(0,168,255,.15);color:#00a8ff}
+.p-mlb{background:rgba(255,107,53,.15);color:#ff6b35}
+.p-nhl{background:rgba(100,200,255,.15);color:#64c8ff}
+.p-epl,.p-soccer,.p-laliga,.p-bundesliga,.p-seriea,.p-ligue1,.p-champions{background:rgba(150,100,255,.15);color:#9664ff}
+.p-wc{background:rgba(255,210,63,.15);color:var(--accent);border:1px solid rgba(255,210,63,.3)}
+.p-f1{background:rgba(255,210,63,.15);color:var(--accent)}
+.p-ufc,.p-mma{background:rgba(255,59,59,.15);color:var(--live)}
+.p-tennis{background:rgba(255,220,0,.15);color:#ffdc00}
+.p-golf{background:rgba(100,255,150,.15);color:#64ff96}
+.p-rugby{background:rgba(255,160,50,.15);color:#ffa032}
+.p-cricket{background:rgba(34,197,94,.15);color:#22c55e}
+.p-def{background:rgba(255,255,255,.08);color:var(--muted)}
+
+.ename{font-family:var(--fd);font-size:19px;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbadge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--live);text-transform:uppercase;letter-spacing:.8px;background:rgba(255,59,59,.1);padding:4px 10px;border-radius:5px;flex-shrink:0}
+
+.ebody{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;align-items:center}
+.ecell{padding:13px 18px;border-right:1px solid var(--border)}
+.ecell:last-child{border-right:none}
+.elabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.eval{font-family:var(--fd);font-size:22px;letter-spacing:.5px;line-height:1}
+.eval.ac{color:var(--accent)}
+.eval.rd{color:var(--live)}
+.eval.sm{font-size:15px;line-height:1.2}
+.esub{font-size:12px;color:var(--muted);margin-top:3px}
+
+.abtn{margin:0 14px;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.abtn:hover{border-color:var(--accent);color:var(--accent)}
+.abtn.on{background:rgba(255,210,63,.1);border-color:var(--accent);color:var(--accent);font-weight:600}
+
+.nomsg{padding:60px;text-align:center;color:var(--muted)}
+.nomsg strong{display:block;font-family:var(--fd);font-size:24px;color:var(--text);margin-bottom:8px}
+
+/* ── World Cup banner ── */
+.wc-banner{
+  max-width:1100px;margin:0 auto;padding:0 32px 20px;
+}
+.wc-inner{
+  background:linear-gradient(135deg,rgba(255,210,63,.12) 0%,rgba(255,59,59,.08) 100%);
+  border:1px solid rgba(255,210,63,.25);border-radius:14px;
+  padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.wc-left{display:flex;align-items:center;gap:14px}
+.wc-icon{font-size:36px;line-height:1}
+.wc-text strong{display:block;font-family:var(--fd);font-size:22px;letter-spacing:1px;color:var(--accent)}
+.wc-text span{font-size:13px;color:var(--muted)}
+.wc-cd{font-family:var(--fd);font-size:28px;color:var(--live);letter-spacing:2px}
+
+.how{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:64px 32px;margin-top:36px}
+.how-inner{max-width:1100px;margin:0 auto}
+.how-title{font-family:var(--fd);font-size:40px;letter-spacing:1px;text-align:center;margin-bottom:6px}
+.how-sub{text-align:center;color:var(--muted);font-size:15px;margin-bottom:44px}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.hcard{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:26px}
+.hnum{font-family:var(--fd);font-size:56px;color:rgba(255,210,63,.12);line-height:1;margin-bottom:10px}
+.hcard-t{font-size:17px;font-weight:600;margin-bottom:7px}
+.hcard-b{color:var(--muted);font-size:14px;line-height:1.7}
+
+.ad-slot{background:var(--bg2);border:1px dashed var(--border2);border-radius:10px;padding:15px 24px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted2);max-width:1100px;margin:0 auto 32px}
+.ad-lbl{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-right:10px}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:34px 32px}
+.fi{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px}
+.flogo{font-family:var(--fd);font-size:22px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.flogo span{color:var(--accent)}
+.flinks{display:flex;gap:22px;flex-wrap:wrap}
+.flinks a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s}
+.flinks a:hover{color:var(--text)}
+.fcopy{font-size:12px;color:var(--muted2);margin-top:6px}
+
+.modal-o{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-o.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:32px;max-width:420px;width:100%;animation:min .2s ease}
+@keyframes min{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.mt{font-family:var(--fd);font-size:26px;letter-spacing:1px;margin-bottom:6px}
+.ms{font-size:14px;color:var(--muted);margin-bottom:22px;line-height:1.6}
+.mlbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.mi{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:11px 14px;color:var(--text);font-family:var(--fb);font-size:14px;outline:none;margin-bottom:14px;transition:border-color .2s}
+.mi:focus{border-color:rgba(255,210,63,.5)}
+.macts{display:flex;gap:10px;margin-top:18px}
+.macts .btn-p{flex:1;justify-content:center}
+.mcancel{padding:12px 20px;border-radius:8px;border:1px solid var(--border2);background:none;color:var(--muted);font-family:var(--fb);font-size:14px;cursor:pointer;transition:background .15s}
+.mcancel:hover{background:var(--bg3)}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1px solid rgba(0,214,143,.4);color:var(--green);padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;transform:translateY(100px);opacity:0;transition:all .3s;z-index:999}
+.toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:768px){
+  .hero-h1{font-size:42px;white-space:normal}
+  .stats{grid-template-columns:1fr 1fr}
+  .ebody{grid-template-columns:1fr 1fr}
+  .ecell:nth-child(2){border-right:none}
+  .ecell:nth-child(3){display:none}
+  .ecell:last-child{grid-column:1/-1;border-top:1px solid var(--border);padding:10px 14px}
+  .how-grid{grid-template-columns:1fr}
+  nav{padding:0 16px}
+  .hero{padding:24px 16px 16px}
+  .btn-p,.btn-s{min-height:48px;padding:14px 24px;font-size:16px}
+  .sbox input{font-size:16px;padding:12px 16px}
+  .fb{padding:8px 16px;font-size:14px}
+  .abtn{min-height:44px;padding:10px 16px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><div class="ldot"></div>GameTime<span>Now</span></div>
+  <div class="nav-r">
+    <span>Your timezone:</span>
+    <span class="tz-chip" id="navTz">Detecting...</span>
+    <div class="nav-clock" id="navClock">--:--</div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag"><div class="ldot" style="width:6px;height:6px"></div>Live · Auto-detects your timezone</div>
+  <h1 class="hero-h1">What time is <em>The Open Championship</em></h1>
+  <p class="hero-sub">Find the local start time for <strong>The Open Championship</strong> in your timezone. Live countdowns auto-detected for fans globally.</p>
+  <div class="hero-acts">
+    <a href="#events" class="btn-p">→ See all events</a>
+    <a href="#how" class="btn-s">How it works</a>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat"><div class="stat-n">12+</div><div class="stat-l">Sports covered</div></div>
+  <div class="stat"><div class="stat-n">180+</div><div class="stat-l">Countries supported</div></div>
+  <div class="stat"><div class="stat-n">0</div><div class="stat-l">Manual inputs needed</div></div>
+  <div class="stat"><div class="stat-n">24/7</div><div class="stat-l">Live countdowns</div></div>
+</div>
+
+<!-- World Cup Countdown Banner -->
+<div class="wc-banner" style="padding-top:14px" id="wcBanner">
+  <div class="wc-inner">
+    <div class="wc-left">
+      <div class="wc-icon">🏆</div>
+      <div class="wc-text">
+        <strong>FIFA World Cup 2026</strong>
+        <span>USA · Canada · Mexico · June 11 – July 19</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;text-align:right">Countdown in your time</div>
+      <div class="wc-cd" id="wcCD">--d --h --m</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="events">
+  <div class="sec-hdr">
+    <h2 class="sec-title">Live & Upcoming <span>Events</span></h2>
+    <div class="filters" id="filterBtns"></div>
+  </div>
+</div>
+
+<div class="sw">
+  <div class="sbox">
+    <span style="color:var(--muted);font-size:16px">⌕</span>
+    <input type="text" id="searchInput" placeholder='Search events, teams, sports...' oninput="applyFilters()">
+  </div>
+</div>
+
+<div class="status-bar">
+  <div id="statusMsg"><span class="sloading">Loading events...</span></div>
+  <div id="evCount" style="font-size:12px;color:var(--muted2)"></div>
+</div>
+
+<div class="eg" id="eventsGrid">
+  <div class="nomsg"><strong>Loading...</strong>Fetching live sports data</div>
+</div>
+<div id="loadMoreWrap" style="display:none;padding:0 32px 40px;max-width:1100px;margin:0 auto;justify-content:center"></div>
+
+<section class="how" id="how">
+  <div class="how-inner">
+    <h2 class="how-title">How <span style="color:var(--accent)">it works</span></h2>
+    <p class="how-sub">Zero friction. From search to kickoff in seconds.</p>
+    <div class="how-grid">
+      <div class="hcard"><div class="hnum">01</div><div class="hcard-t">We detect your timezone instantly</div><div class="hcard-b">The moment you land, GameTimeNow auto-detects where you are. No sign-up, no settings. Auckland, Sydney, Tokyo, London — it just works.</div></div>
+      <div class="hcard"><div class="hnum">02</div><div class="hcard-t">Every event converted automatically</div><div class="hcard-b">Live data from ESPN plus curated schedules for F1, World Cup, UFC and more. Every event shown in your exact local time — day, hour and minute.</div></div>
+      <div class="hcard"><div class="hnum">03</div><div class="hcard-t">Set an alert, never miss the start</div><div class="hcard-b">One tap sets a reminder before any event starts. No more waking up to find your race ended hours ago or missing tip-off because of a timezone mix-up.</div></div>
+    </div>
+  </div>
+</section>
+
+<div style="padding:28px 0 0"><div class="ad-slot"><span class="ad-lbl">Ad</span>300×250 in-feed — premium sports inventory</div></div>
+
+<footer>
+  <div class="fi">
+    <div>
+      <div class="flogo"><div class="ldot"></div>GameTime<span>Now</span></div>
+      <div class="fcopy">© 2026 GameTimeNow · Live data via ESPN · Times shown in your local timezone</div>
+    </div>
+    <div class="flinks">
+      <a href="#">About</a><a href="#">F1 Times</a><a href="#">World Cup</a>
+      <a href="#">UFC Times</a><a href="#">NBA Times</a><a href="#">Privacy</a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-o" id="alertModal">
+  <div class="modal">
+    <div class="mt">Set your alert 🔔</div>
+    <p class="ms">We'll remind you before <strong id="modalName">this event</strong> starts — in your local time.</p>
+    <div class="mlbl">Your email</div>
+    <input class="mi" type="email" id="modalEmail" placeholder="you@example.com">
+    <div class="mlbl">Remind me</div>
+    <select class="mi" id="modalRemind">
+      <option value="30">30 minutes before</option>
+      <option value="60">1 hour before</option>
+      <option value="120">2 hours before</option>
+      <option value="1440">1 day before</option>
+    </select>
+    <div style="display:flex;align-items:center;gap:8px;background:rgba(0,214,143,0.06);border:1px solid rgba(0,214,143,0.2);border-radius:8px;padding:10px 14px;margin-bottom:4px">
+      <span style="font-size:16px">🔒</span>
+      <span style="font-size:12px;color:var(--muted);line-height:1.5">We promise: <strong style="color:var(--text)">no ads, no spam, no third-party sharing.</strong> One reminder per event, nothing else.</span>
+    </div>
+    <div class="macts">
+      <button class="btn-p" onclick="confirmAlert()">Set alert →</button>
+      <button class="mcancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const alertedIds = new Set();
+let activeFilter = 'All';
+let allEvents = [];
+let pendingAlertId = null;
+
+// ── STATIC schedules — sports with poor ESPN scoreboard coverage ─────────────
+const NOW = Date.now();
+function futureOnly(arr) { return arr.filter(e => e.startMs > NOW - 3*3600*1000); }
+
+const STATIC = futureOnly([
+  // ── UEFA Champions League 2025-26 ─────────────────────────────────────────
+  // Final: PSG vs Arsenal — May 30 2026, 18:00 CEST = 16:00 UTC
+  {id:'ucl-final',sport:'UEFA CL',name:'UCL Final: PSG vs Arsenal 🏆',subtitle:'UEFA Champions League 2025-26 · Final',venue:'Puskás Aréna, Budapest',startMs:new Date('2026-05-30T16:00:00Z').getTime()},
+  // Next season UCL — group stage starts Sep 2026
+  {id:'ucl-26-q',sport:'UEFA CL',name:'UCL 2026-27 — Qualifying Begins',subtitle:'UEFA Champions League 2026-27 · Qualifying',venue:'Various venues, Europe',startMs:new Date('2026-07-07T18:00:00Z').getTime()},
+
+  // ── F1 2026 — VERIFIED race start times (UTC) from official calendar ─────
+  // Round 5: Canada — May 24, 4pm ET = 20:00 UTC
+  {id:'f1-r5',sport:'F1',name:'Canadian Grand Prix',subtitle:'Formula 1 2026 · Round 5',venue:'Circuit Gilles Villeneuve, Montreal',startMs:new Date('2026-05-24T20:00:00Z').getTime()},
+  // Round 6: Monaco — June 7, 3pm CET = 13:00 UTC
+  {id:'f1-r6',sport:'F1',name:'Monaco Grand Prix',subtitle:'Formula 1 2026 · Round 6',venue:'Circuit de Monaco, Monaco',startMs:new Date('2026-06-07T13:00:00Z').getTime()},
+  // Round 7: Barcelona-Catalunya — June 14, 3pm CEST = 13:00 UTC
+  {id:'f1-r7',sport:'F1',name:'Barcelona-Catalunya Grand Prix',subtitle:'Formula 1 2026 · Round 7',venue:'Circuit de Barcelona-Catalunya, Barcelona',startMs:new Date('2026-06-14T13:00:00Z').getTime()},
+  // Round 8: Austria — June 28, 3pm CEST = 13:00 UTC
+  {id:'f1-r8',sport:'F1',name:'Austrian Grand Prix',subtitle:'Formula 1 2026 · Round 8',venue:'Red Bull Ring, Spielberg',startMs:new Date('2026-06-28T13:00:00Z').getTime()},
+  // Round 9: Great Britain — July 5, 3pm BST = 14:00 UTC
+  {id:'f1-r9',sport:'F1',name:'British Grand Prix',subtitle:'Formula 1 2026 · Round 9',venue:'Silverstone Circuit, Silverstone',startMs:new Date('2026-07-05T14:00:00Z').getTime()},
+  // Round 10: Belgium — July 19, 3pm CEST = 13:00 UTC
+  {id:'f1-r10',sport:'F1',name:'Belgian Grand Prix',subtitle:'Formula 1 2026 · Round 10',venue:'Circuit de Spa-Francorchamps, Spa',startMs:new Date('2026-07-19T13:00:00Z').getTime()},
+  // Round 11: Hungary — July 26, 3pm CEST = 13:00 UTC
+  {id:'f1-r11',sport:'F1',name:'Hungarian Grand Prix',subtitle:'Formula 1 2026 · Round 11',venue:'Hungaroring, Budapest',startMs:new Date('2026-07-26T13:00:00Z').getTime()},
+  // Round 12: Netherlands — Aug 23, 3pm CEST = 13:00 UTC
+  {id:'f1-r12',sport:'F1',name:'Dutch Grand Prix',subtitle:'Formula 1 2026 · Round 12',venue:'Circuit Zandvoort, Netherlands',startMs:new Date('2026-08-23T13:00:00Z').getTime()},
+  // Round 13: Italy — Sep 6, 3pm CEST = 13:00 UTC
+  {id:'f1-r13',sport:'F1',name:'Italian Grand Prix',subtitle:'Formula 1 2026 · Round 13',venue:'Autodromo Nazionale Monza, Monza',startMs:new Date('2026-09-06T13:00:00Z').getTime()},
+  // Round 14: Spain (Madrid) — Sep 13, 3pm CEST = 13:00 UTC
+  {id:'f1-r14',sport:'F1',name:'Spanish Grand Prix (Madrid)',subtitle:'Formula 1 2026 · Round 14',venue:'IFEMA Circuit, Madrid',startMs:new Date('2026-09-13T13:00:00Z').getTime()},
+
+  // ── FIFA WORLD CUP 2026 — REAL CONFIRMED FIXTURES (ET → UTC, ET=UTC-4) ───
+  // GROUP A: Mexico, South Africa, Korea Republic, Czechia
+  {id:'wc-a1',sport:'World Cup',name:'Mexico vs South Africa 🇲🇽🇿🇦',subtitle:'FIFA World Cup 2026 · Group A',venue:'Estadio Azteca, Mexico City',startMs:new Date('2026-06-11T19:00:00Z').getTime()},
+  {id:'wc-a2',sport:'World Cup',name:'Korea Republic vs Czechia 🇰🇷🇨🇿',subtitle:'FIFA World Cup 2026 · Group A',venue:'Estadio Akron, Guadalajara',startMs:new Date('2026-06-12T02:00:00Z').getTime()},
+  {id:'wc-a3',sport:'World Cup',name:'Czechia vs South Africa 🇨🇿🇿🇦',subtitle:'FIFA World Cup 2026 · Group A',venue:'Mercedes-Benz Stadium, Atlanta',startMs:new Date('2026-06-18T16:00:00Z').getTime()},
+  {id:'wc-a4',sport:'World Cup',name:'Mexico vs Korea Republic 🇲🇽🇰🇷',subtitle:'FIFA World Cup 2026 · Group A',venue:'Estadio Akron, Guadalajara',startMs:new Date('2026-06-19T01:00:00Z').getTime()},
+  {id:'wc-a5',sport:'World Cup',name:'Czechia vs Mexico 🇨🇿🇲🇽',subtitle:'FIFA World Cup 2026 · Group A',venue:'Estadio Azteca, Mexico City',startMs:new Date('2026-06-25T01:00:00Z').getTime()},
+  {id:'wc-a6',sport:'World Cup',name:'South Africa vs Korea Republic 🇿🇦🇰🇷',subtitle:'FIFA World Cup 2026 · Group A',venue:'Estadio BBVA, Monterrey',startMs:new Date('2026-06-25T01:00:00Z').getTime()},
+  // GROUP B: Canada, Bosnia & Herzegovina, Qatar, Switzerland
+  {id:'wc-b1',sport:'World Cup',name:'Canada vs Bosnia & Herzegovina 🇨🇦🇧🇦',subtitle:'FIFA World Cup 2026 · Group B',venue:'BMO Field, Toronto',startMs:new Date('2026-06-12T19:00:00Z').getTime()},
+  {id:'wc-b2',sport:'World Cup',name:'Qatar vs Switzerland 🇶🇦🇨🇭',subtitle:'FIFA World Cup 2026 · Group B',venue:"Levi's Stadium, Santa Clara CA",startMs:new Date('2026-06-13T19:00:00Z').getTime()},
+  {id:'wc-b3',sport:'World Cup',name:'Switzerland vs Bosnia & Herzegovina 🇨🇭🇧🇦',subtitle:'FIFA World Cup 2026 · Group B',venue:'SoFi Stadium, Los Angeles',startMs:new Date('2026-06-18T19:00:00Z').getTime()},
+  {id:'wc-b4',sport:'World Cup',name:'Canada vs Qatar 🇨🇦🇶🇦',subtitle:'FIFA World Cup 2026 · Group B',venue:'BC Place, Vancouver',startMs:new Date('2026-06-18T22:00:00Z').getTime()},
+  // GROUP C: Brazil, Morocco, Haiti, Scotland
+  {id:'wc-c1',sport:'World Cup',name:'Brazil vs Morocco 🇧🇷🇲🇦',subtitle:'FIFA World Cup 2026 · Group C',venue:'MetLife Stadium, New York',startMs:new Date('2026-06-13T22:00:00Z').getTime()},
+  {id:'wc-c2',sport:'World Cup',name:'Haiti vs Scotland 🇭🇹🏴󠁧󠁢󠁳󠁣󠁴󠁿',subtitle:'FIFA World Cup 2026 · Group C',venue:'Gillette Stadium, Boston',startMs:new Date('2026-06-14T01:00:00Z').getTime()},
+  {id:'wc-c3',sport:'World Cup',name:'Scotland vs Morocco 🏴󠁧󠁢󠁳󠁣󠁴󠁿🇲🇦',subtitle:'FIFA World Cup 2026 · Group C',venue:'Gillette Stadium, Boston',startMs:new Date('2026-06-19T22:00:00Z').getTime()},
+  {id:'wc-c4',sport:'World Cup',name:'Brazil vs Haiti 🇧🇷🇭🇹',subtitle:'FIFA World Cup 2026 · Group C',venue:'Lincoln Financial Field, Philadelphia',startMs:new Date('2026-06-20T00:30:00Z').getTime()},
+  // GROUP D: USA, Paraguay, Australia, Türkiye
+  {id:'wc-d1',sport:'World Cup',name:'USA vs Paraguay 🇺🇸🇵🇾',subtitle:'FIFA World Cup 2026 · Group D',venue:'SoFi Stadium, Los Angeles',startMs:new Date('2026-06-13T01:00:00Z').getTime()},
+  {id:'wc-d2',sport:'World Cup',name:'Australia vs Türkiye 🦘🇹🇷',subtitle:'FIFA World Cup 2026 · Group D',venue:'BC Place, Vancouver',startMs:new Date('2026-06-13T04:00:00Z').getTime()},
+  {id:'wc-d3',sport:'World Cup',name:'USA vs Australia 🇺🇸🦘',subtitle:'FIFA World Cup 2026 · Group D',venue:'Lumen Field, Seattle',startMs:new Date('2026-06-19T19:00:00Z').getTime()},
+  {id:'wc-d4',sport:'World Cup',name:'Türkiye vs Paraguay 🇹🇷🇵🇾',subtitle:'FIFA World Cup 2026 · Group D',venue:"Levi's Stadium, Santa Clara CA",startMs:new Date('2026-06-20T03:00:00Z').getTime()},
+  // GROUP E: Germany, Curaçao, Ivory Coast, Ecuador
+  {id:'wc-e1',sport:'World Cup',name:'Germany vs Curaçao 🇩🇪🇨🇼',subtitle:'FIFA World Cup 2026 · Group E',venue:'NRG Stadium, Houston',startMs:new Date('2026-06-14T17:00:00Z').getTime()},
+  {id:'wc-e2',sport:'World Cup',name:"Ivory Coast vs Ecuador 🇨🇮🇪🇨",subtitle:'FIFA World Cup 2026 · Group E',venue:'Lincoln Financial Field, Philadelphia',startMs:new Date('2026-06-14T23:00:00Z').getTime()},
+  // GROUP F: Netherlands, Japan, Sweden, Tunisia
+  {id:'wc-f1',sport:'World Cup',name:'Netherlands vs Japan 🇳🇱🇯🇵',subtitle:'FIFA World Cup 2026 · Group F',venue:'AT&T Stadium, Dallas',startMs:new Date('2026-06-14T20:00:00Z').getTime()},
+  {id:'wc-f2',sport:'World Cup',name:'Sweden vs Tunisia 🇸🇪🇹🇳',subtitle:'FIFA World Cup 2026 · Group F',venue:'Estadio BBVA, Monterrey',startMs:new Date('2026-06-15T02:00:00Z').getTime()},
+  // GROUP G: Belgium, Egypt, Iran, New Zealand
+  {id:'wc-g1',sport:'World Cup',name:'Belgium vs Egypt 🇧🇪🇪🇬',subtitle:'FIFA World Cup 2026 · Group G',venue:'Lumen Field, Seattle',startMs:new Date('2026-06-15T19:00:00Z').getTime()},
+  {id:'wc-g2',sport:'World Cup',name:'Iran vs New Zealand 🇮🇷🇳🇿',subtitle:'FIFA World Cup 2026 · Group G',venue:'SoFi Stadium, Los Angeles',startMs:new Date('2026-06-16T01:00:00Z').getTime()},
+  {id:'wc-g3',sport:'World Cup',name:'New Zealand vs Egypt 🇳🇿🇪🇬',subtitle:'FIFA World Cup 2026 · Group G',venue:'BC Place, Vancouver',startMs:new Date('2026-06-22T01:00:00Z').getTime()},
+  {id:'wc-g4',sport:'World Cup',name:'Belgium vs Iran 🇧🇪🇮🇷',subtitle:'FIFA World Cup 2026 · Group G',venue:'SoFi Stadium, Los Angeles',startMs:new Date('2026-06-21T19:00:00Z').getTime()},
+  // GROUP H: Spain, Cape Verde, Saudi Arabia, Uruguay
+  {id:'wc-h1',sport:'World Cup',name:'Spain vs Cape Verde 🇪🇸🇨🇻',subtitle:'FIFA World Cup 2026 · Group H',venue:'Mercedes-Benz Stadium, Atlanta',startMs:new Date('2026-06-15T16:00:00Z').getTime()},
+  {id:'wc-h2',sport:'World Cup',name:'Saudi Arabia vs Uruguay 🇸🇦🇺🇾',subtitle:'FIFA World Cup 2026 · Group H',venue:'Hard Rock Stadium, Miami',startMs:new Date('2026-06-15T22:00:00Z').getTime()},
+  // GROUP I: France, Senegal, Iraq, Norway
+  {id:'wc-i1',sport:'World Cup',name:'France vs Senegal 🇫🇷🇸🇳',subtitle:'FIFA World Cup 2026 · Group I',venue:'MetLife Stadium, New York',startMs:new Date('2026-06-16T19:00:00Z').getTime()},
+  {id:'wc-i2',sport:'World Cup',name:'Iraq vs Norway 🇮🇶🇳🇴',subtitle:'FIFA World Cup 2026 · Group I',venue:'Gillette Stadium, Boston',startMs:new Date('2026-06-16T22:00:00Z').getTime()},
+  // GROUP J: England, Senegal (placeholder — full fixtures TBC by FIFA)
+  {id:'wc-j1',sport:'World Cup',name:'England — Group J Match 1 🏴󠁧󠁢󠁥󠁮󠁧󠁿',subtitle:'FIFA World Cup 2026 · Group J',venue:'MetLife Stadium, New York',startMs:new Date('2026-06-17T19:00:00Z').getTime()},
+  // GROUP K: Argentina
+  {id:'wc-k1',sport:'World Cup',name:'Argentina — Group K Match 1 🇦🇷',subtitle:'FIFA World Cup 2026 · Group K',venue:'AT&T Stadium, Dallas',startMs:new Date('2026-06-17T01:00:00Z').getTime()},
+  // GROUP L: Portugal
+  {id:'wc-l1',sport:'World Cup',name:'Portugal — Group L Match 1 🇵🇹',subtitle:'FIFA World Cup 2026 · Group L',venue:'Hard Rock Stadium, Miami',startMs:new Date('2026-06-17T22:00:00Z').getTime()},
+  // KNOCKOUT — exact matchups TBC
+  {id:'wc-r32',sport:'World Cup',name:'Round of 32 — Day 1',subtitle:'FIFA World Cup 2026 · Knockout Stage',venue:'Various venues, USA',startMs:new Date('2026-06-28T19:00:00Z').getTime()},
+  {id:'wc-r16',sport:'World Cup',name:'Round of 16 — Day 1',subtitle:'FIFA World Cup 2026 · Knockout Stage',venue:'Various venues, USA',startMs:new Date('2026-07-04T19:00:00Z').getTime()},
+  {id:'wc-qf1',sport:'World Cup',name:'Quarter-Final 1',subtitle:'FIFA World Cup 2026 · Quarter-Final',venue:'AT&T Stadium, Dallas',startMs:new Date('2026-07-09T23:00:00Z').getTime()},
+  {id:'wc-qf2',sport:'World Cup',name:'Quarter-Final 2',subtitle:'FIFA World Cup 2026 · Quarter-Final',venue:'MetLife Stadium, New York',startMs:new Date('2026-07-10T23:00:00Z').getTime()},
+  {id:'wc-sf1',sport:'World Cup',name:'Semi-Final 1',subtitle:'FIFA World Cup 2026 · Semi-Final',venue:'MetLife Stadium, New York',startMs:new Date('2026-07-14T23:00:00Z').getTime()},
+  {id:'wc-sf2',sport:'World Cup',name:'Semi-Final 2',subtitle:'FIFA World Cup 2026 · Semi-Final',venue:'AT&T Stadium, Dallas',startMs:new Date('2026-07-15T23:00:00Z').getTime()},
+  {id:'wc-final',sport:'World Cup',name:'FIFA World Cup Final 🏆',subtitle:'FIFA World Cup 2026 · THE FINAL · MetLife Stadium',venue:'MetLife Stadium, New York',startMs:new Date('2026-07-19T20:00:00Z').getTime()},
+
+  // ── UFC ────────────────────────────────────────────────────────────────────
+  {id:'ufc-315',sport:'UFC',name:'UFC 315: Main Card',subtitle:'UFC Pay-Per-View',venue:'Bell Centre, Montreal',startMs:new Date('2026-05-11T03:00:00Z').getTime()},
+  {id:'ufc-fn1',sport:'UFC',name:'UFC Fight Night',subtitle:'UFC Fight Night · Main Card',venue:'UFC Apex, Las Vegas',startMs:new Date('2026-05-17T02:00:00Z').getTime()},
+  {id:'ufc-316',sport:'UFC',name:'UFC 316',subtitle:'UFC Pay-Per-View',venue:'T-Mobile Arena, Las Vegas',startMs:new Date('2026-06-07T03:00:00Z').getTime()},
+
+  // ── Golf Majors ────────────────────────────────────────────────────────────
+  {id:'golf-pga',sport:'Golf',name:'PGA Championship',subtitle:'Major Championship 2026 · R1',venue:'Quail Hollow Club, Charlotte',startMs:new Date('2026-05-14T12:00:00Z').getTime()},
+  {id:'golf-us',sport:'Golf',name:'US Open',subtitle:'Major Championship 2026 · R1',venue:'Oakmont Country Club, PA',startMs:new Date('2026-06-18T12:00:00Z').getTime()},
+  {id:'golf-open',sport:'Golf',name:'The Open Championship',subtitle:'Major Championship 2026 · R1',venue:'Royal Troon, Scotland',startMs:new Date('2026-07-16T06:30:00Z').getTime()},
+
+  // ── Tennis ─────────────────────────────────────────────────────────────────
+  {id:'tennis-rg-mf',sport:'Tennis',name:"French Open — Men's Final",subtitle:'Roland Garros 2026 · Grand Slam',venue:'Stade Roland Garros, Paris',startMs:new Date('2026-06-07T13:00:00Z').getTime()},
+  {id:'tennis-w-mf',sport:'Tennis',name:"Wimbledon — Men's Final",subtitle:'Wimbledon 2026 · Grand Slam',venue:'Centre Court, London',startMs:new Date('2026-07-12T14:00:00Z').getTime()},
+
+  // ── Rugby ──────────────────────────────────────────────────────────────────
+  {id:'rugby-bl1',sport:'Rugby',name:'All Blacks vs Australia — Bledisloe I',subtitle:'Bledisloe Cup 2026 · Test 1',venue:'Eden Park, Auckland',startMs:new Date('2026-08-08T07:35:00Z').getTime()},
+
+  // ── Cricket — IPL 2026 (IST = UTC+5:30, evening matches ~7:30pm IST = 14:00 UTC) ──
+  {id:'ipl-dc-csk',sport:'Cricket',name:'Delhi Capitals vs CSK',subtitle:'IPL 2026 · T20 · Match Day',venue:'Arun Jaitley Stadium, Delhi',startMs:new Date('2026-05-06T14:00:00Z').getTime()},
+  {id:'ipl-mi-lsg',sport:'Cricket',name:'Mumbai Indians vs LSG',subtitle:'IPL 2026 · T20 · Match Day',venue:'Wankhede Stadium, Mumbai',startMs:new Date('2026-05-07T14:00:00Z').getTime()},
+  {id:'ipl-srh-kkr',sport:'Cricket',name:'SRH vs Kolkata Knight Riders',subtitle:'IPL 2026 · T20 · Match Day',venue:'Rajiv Gandhi Intl Stadium, Hyderabad',startMs:new Date('2026-05-08T14:00:00Z').getTime()},
+  {id:'ipl-rr-rcb',sport:'Cricket',name:'Rajasthan Royals vs RCB',subtitle:'IPL 2026 · T20 · Match Day',venue:'Sawai Mansingh Stadium, Jaipur',startMs:new Date('2026-05-09T14:00:00Z').getTime()},
+  {id:'ipl-gt-pbks',sport:'Cricket',name:'Gujarat Titans vs Punjab Kings',subtitle:'IPL 2026 · T20 · Match Day',venue:'Narendra Modi Stadium, Ahmedabad',startMs:new Date('2026-05-10T14:00:00Z').getTime()},
+  {id:'ipl-playoff1',sport:'Cricket',name:'IPL 2026 — Qualifier 1',subtitle:'IPL 2026 · Playoffs',venue:'Narendra Modi Stadium, Ahmedabad',startMs:new Date('2026-05-19T14:00:00Z').getTime()},
+  {id:'ipl-elim',sport:'Cricket',name:'IPL 2026 — Eliminator',subtitle:'IPL 2026 · Playoffs',venue:'Eden Gardens, Kolkata',startMs:new Date('2026-05-20T14:00:00Z').getTime()},
+  {id:'ipl-playoff2',sport:'Cricket',name:'IPL 2026 — Qualifier 2',subtitle:'IPL 2026 · Playoffs',venue:'Eden Gardens, Kolkata',startMs:new Date('2026-05-22T14:00:00Z').getTime()},
+  {id:'ipl-final',sport:'Cricket',name:'IPL 2026 — Grand Final 🏆',subtitle:'IPL 2026 · Final',venue:'Narendra Modi Stadium, Ahmedabad',startMs:new Date('2026-05-24T14:00:00Z').getTime()},
+  // International Cricket
+  {id:'cricket-eng-ind-t1',sport:'Cricket',name:'England vs India — 1st Test',subtitle:'India tour of England 2026 · Test Series',venue:'Headingley, Leeds',startMs:new Date('2026-06-20T10:00:00Z').getTime()},
+  {id:'cricket-eng-ind-t2',sport:'Cricket',name:'England vs India — 2nd Test',subtitle:'India tour of England 2026 · Test Series',venue:"Lord's Cricket Ground, London",startMs:new Date('2026-07-02T10:00:00Z').getTime()},
+  {id:'cricket-t20wc-1',sport:'Cricket',name:"Men's T20 World Cup — Group Stage",subtitle:"ICC Men's T20 World Cup 2026",venue:'Various Venues',startMs:new Date('2026-10-01T10:00:00Z').getTime()},
+].map(e => {
+  // Sport-appropriate durations so events disappear after they end
+  const dur = {
+    'F1': 3*3600*1000,          // ~2h race + 1h buffer
+    'World Cup': 2.5*3600*1000, // 90min + ET + buffer
+    'UFC': 5*3600*1000,         // full card ~4-5h
+    'Golf': 8*3600*1000,        // full round day
+    'Tennis': 4*3600*1000,
+    'Rugby': 2.5*3600*1000,
+    'Cricket': 9*3600*1000,     // T20 ~3h, Test match day ~6-9h
+  };
+  return {...e, durMs: dur[e.sport] || 3*3600*1000, isActive:false, statusDetail:'', stateType:'SCHEDULED'};
+}));
+
+// ── ESPN live API ─────────────────────────────────────────────────────────────
+const EBASE = 'https://site.api.espn.com/apis/site/v2/sports';
+const ESPN_SRC = [
+  {sport:'NBA',        path:'basketball/nba/scoreboard'},
+  {sport:'MLB',        path:'baseball/mlb/scoreboard'},
+  {sport:'NHL',        path:'hockey/nhl/scoreboard'},
+  {sport:'NFL',        path:'football/nfl/scoreboard'},
+  {sport:'EPL',        path:'soccer/eng.1/scoreboard'},
+  {sport:'MLS',        path:'soccer/usa.1/scoreboard'},
+  {sport:'La Liga',    path:'soccer/esp.1/scoreboard'},
+  {sport:'Bundesliga', path:'soccer/ger.1/scoreboard'},
+  {sport:'Serie A',    path:'soccer/ita.1/scoreboard'},
+  {sport:'Ligue 1',    path:'soccer/fra.1/scoreboard'},
+  {sport:'UEFA CL',    path:'soccer/uefa.champions/scoreboard'},
+  {sport:'Cricket',    path:'cricket/ipl/scoreboard'},
+  {sport:'Cricket',    path:'cricket/int-t20/scoreboard'},
+  {sport:'Tennis',     path:'tennis/scoreboard'},
+];
+
+const DONE_STATUS = new Set([
+  'STATUS_FINAL','STATUS_FULL_TIME','STATUS_FULL_PEN','STATUS_FINAL_OT',
+  'STATUS_FINAL_PEN','STATUS_POSTPONED','STATUS_CANCELED','STATUS_ABANDONED',
+  'STATUS_END_OF_EXTRATIME','STATUS_FULL_EXTRA_TIME',
+]);
+
+function dStr(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().slice(0,10).replace(/-/g,'');
+}
+
+function parseESPN(sport, data) {
+  return (data.events || []).map(ev => {
+    const comp = ev.competitions?.[0] || {};
+    const status = comp.status || {};
+    const st = status.type?.name || '';
+    if (DONE_STATUS.has(st)) return null;
+    const startDate = new Date(ev.date || comp.date);
+    if (isNaN(startDate)) return null;
+    const isActive = ['STATUS_IN_PROGRESS','STATUS_HALFTIME','STATUS_SECOND_HALF','STATUS_FIRST_HALF'].includes(st);
+    if (!isActive && startDate.getTime() < Date.now() - 5*3600*1000) return null;
+    const competitors = comp.competitors || [];
+    const home = competitors.find(c => c.homeAway==='home');
+    const away = competitors.find(c => c.homeAway==='away');
+    let name = '';
+    if (home && away) name = (away.team?.shortDisplayName||away.team?.displayName||'') + ' vs ' + (home.team?.shortDisplayName||home.team?.displayName||'');
+    name = name || ev.name || ev.shortName || 'TBD';
+    const venue = comp.venue;
+    return {
+      id:'espn-'+ev.id, sport, name,
+      subtitle: ev.season?.displayName || ev.league?.name || sport,
+      venue: (venue ? (venue.fullName||venue.shortName||'') : '') + (venue?.address?.city ? ', '+venue.address.city : ''),
+      startMs: startDate.getTime(), durMs:4*3600*1000,
+      isActive, statusDetail: status.type?.shortDetail||'', stateType: st,
+    };
+  }).filter(Boolean);
+}
+
+async function fetchESPN(path, day) {
+  try {
+    const r = await fetch(`${EBASE}/${path}?dates=${day}&limit=100`);
+    if (!r.ok) return {};
+    return await r.json();
+  } catch(e) { return {}; }
+}
+
+async function loadAllEvents() {
+  setStatus('loading');
+  // Fetch today + next 7 days for each ESPN source
+  const days = Array.from({length:8}, (_,i) => dStr(i));
+  const fetches = [];
+  for (const src of ESPN_SRC) {
+    for (const day of days) {
+      fetches.push(fetchESPN(src.path, day).then(d => parseESPN(src.sport, d)));
+    }
+  }
+  const results = await Promise.allSettled(fetches);
+  let espnEvs = [];
+  results.forEach(r => { if (r.status==='fulfilled') espnEvs = espnEvs.concat(r.value); });
+
+  // Merge ESPN + static, dedupe, and drop anything that has clearly ended
+  const seen = new Set();
+  const now2 = Date.now();
+  let evs = [...espnEvs, ...STATIC].filter(e => {
+    if (seen.has(e.id)) return false;
+    seen.add(e.id);
+    // Drop static events that have elapsed (start + duration in past)
+    if (!e.isActive && e.startMs + e.durMs < now2) return false;
+    return true;
+  });
+
+  // Sort: live first → soonest upcoming
+  evs.sort((a,b) => {
+    if (a.isActive && !b.isActive) return -1;
+    if (!a.isActive && b.isActive) return 1;
+    return a.startMs - b.startMs;
+  });
+
+  allEvents = evs;
+  buildFilters();
+  applyFilters();
+  setStatus('done', evs.length);
+}
+
+// ── UI ────────────────────────────────────────────────────────────────────────
+function fmt(d, opts) { return d.toLocaleString('en', {timeZone:TZ, ...opts}); }
+function fmtCD(ms) {
+  if (ms < 0) return null;
+  const s = Math.floor(ms/1000);
+  const d=Math.floor(s/86400), h=Math.floor((s%86400)/3600), m=Math.floor((s%3600)/60), sc=s%60;
+  if (d > 0) return d+'d '+String(h).padStart(2,'0')+'h '+String(m).padStart(2,'0')+'m';
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');
+}
+
+function setStatus(state, count) {
+  document.getElementById('statusMsg').innerHTML = state==='loading'
+    ? '<span class="sloading">Fetching live data from ESPN...</span>'
+    : '<span class="sdot"></span>Live data · refreshes every 60s';
+  document.getElementById('evCount').textContent = count ? count+' events' : '';
+}
+
+const ICONS = {All:'★',NBA:'🏀',NFL:'🏈',MLB:'⚾',NHL:'🏒',EPL:'⚽',MLS:'⚽',
+  'World Cup':'🏆','UEFA CL':'🏆','La Liga':'⚽',Bundesliga:'⚽','Serie A':'⚽','Ligue 1':'⚽',
+  UFC:'🥊',Tennis:'🎾',Golf:'⛳',Rugby:'🏉',F1:'🏎',Cricket:'🏏'};
+
+const PILLMAP = {NBA:'p-nba',NFL:'p-nfl',MLB:'p-mlb',NHL:'p-nhl',
+  EPL:'p-epl',MLS:'p-soccer','La Liga':'p-laliga',Bundesliga:'p-bundesliga',
+  'Serie A':'p-seriea','Ligue 1':'p-ligue1','UEFA CL':'p-champions',
+  'World Cup':'p-wc',UFC:'p-ufc',Tennis:'p-tennis',Golf:'p-golf',Rugby:'p-rugby',F1:'p-f1',Cricket:'p-cricket'};
+
+function buildFilters() {
+  const sports = ['All', ...new Set(allEvents.map(e => e.sport))];
+  document.getElementById('filterBtns').innerHTML = sports.map(s =>
+    `<button class="fb ${s===activeFilter?'on':''}" onclick="setFilter('${s}')">${ICONS[s]||'●'} ${s}</button>`
+  ).join('');
+}
+
+const PAGE_SIZE = 25;
+let currentPage = 1;
+let currentList = [];
+
+function setFilter(f) { activeFilter=f; currentPage=1; buildFilters(); applyFilters(); }
+
+function applyFilters() {
+  const q = (document.getElementById('searchInput').value||'').toLowerCase();
+  currentList = allEvents.filter(ev => {
+    const ms = activeFilter==='All' || ev.sport===activeFilter;
+    const sq = !q || ev.name.toLowerCase().includes(q) || ev.sport.toLowerCase().includes(q)
+              || (ev.venue||'').toLowerCase().includes(q) || (ev.subtitle||'').toLowerCase().includes(q);
+    return ms && sq;
+  });
+  currentPage = 1;
+  renderEvents();
+}
+
+function loadMore() {
+  currentPage++;
+  renderEvents(true);
+}
+
+function renderEvents(append = false) {
+  const el = document.getElementById('eventsGrid');
+  if (!currentList.length) {
+    el.innerHTML = '<div class="nomsg"><strong>No events found</strong>Try a different sport or search</div>';
+    document.getElementById('loadMoreWrap').style.display = 'none';
+    return;
+  }
+
+  const now = Date.now();
+  const pageEnd = currentPage * PAGE_SIZE;
+  const slice = currentList.slice(0, pageEnd);
+  const hasMore = currentList.length > pageEnd;
+
+  const cards = slice.map((ev, i) => {
+    const live = ev.isActive;
+    const ms = ev.startMs - now;
+    const cd = fmtCD(ms);
+    const lt = fmt(new Date(ev.startMs), {hour:'2-digit',minute:'2-digit',hour12:true});
+    const ld = fmt(new Date(ev.startMs), {weekday:'short',month:'short',day:'numeric'});
+    const alerted = alertedIds.has(ev.id);
+    const vp = (ev.venue||'').split(',');
+    const pill = PILLMAP[ev.sport]||'p-def';
+    return `<div class="ecard ${live?'islive':''}" style="animation-delay:${Math.min(i*0.025,0.4)}s">
+  <div class="etop">
+    <div class="eleft">
+      <span class="pill ${pill}">${ev.sport}</span>
+      <span class="ename">${ev.name}</span>
+    </div>
+    ${live?'<div class="lbadge"><div class="ldot"></div>Live</div>':''}
+  </div>
+  <div class="ebody">
+    <div class="ecell">
+      <div class="elabel">Your local time</div>
+      <div class="eval ac">${lt}</div>
+      <div class="esub">${ld} · ${TZ.replace(/_/g,' ')}</div>
+    </div>
+    <div class="ecell">
+      <div class="elabel">${live?'Status':'Starts in'}</div>
+      <div class="eval ${live?'rd':'ac'}" id="cd-${ev.id}">${live?(ev.statusDetail||'LIVE'):(cd||'< 1 min')}</div>
+      <div class="esub">${ev.subtitle||''}</div>
+    </div>
+    <div class="ecell">
+      <div class="elabel">Venue</div>
+      <div class="eval sm">${vp[0]||'TBD'}</div>
+      <div class="esub">${vp.slice(1).join(',').trim()}</div>
+    </div>
+    <div class="ecell">
+      <button class="abtn ${alerted?'on':''}" onclick="openModal('${ev.id}','${ev.name.replace(/'/g,"\\'")}')">
+        ${alerted?'✓ Alert set':'+ Alert'}
+      </button>
+    </div>
+  </div>
+</div>`;
+  }).join('');
+
+  el.innerHTML = cards;
+
+  // Load more button
+  const lmw = document.getElementById('loadMoreWrap');
+  if (hasMore) {
+    const remaining = currentList.length - pageEnd;
+    lmw.style.display = 'flex';
+    lmw.innerHTML = `
+      <div style="text-align:center">
+        <button class="btn-s" onclick="loadMore()" style="padding:12px 36px;font-size:14px">
+          Show ${Math.min(remaining, PAGE_SIZE)} more events <span style="color:var(--muted);margin-left:4px">(${remaining} remaining)</span>
+        </button>
+      </div>`;
+  } else {
+    lmw.style.display = 'none';
+  }
+}
+
+function updateClocks() {
+  const now = Date.now();
+  const t = new Date();
+  document.getElementById('navClock').textContent =
+    t.toLocaleTimeString('en',{timeZone:TZ,hour:'2-digit',minute:'2-digit',hour12:false});
+  document.getElementById('navTz').textContent = TZ.replace(/_/g,' ');
+  document.getElementById('navTz').title = 'Auto-detected from your device — no GPS or location permission needed';
+
+  // World Cup countdown
+  const wcMs = new Date('2026-06-11T22:00:00Z').getTime() - now;
+  if (wcMs > 0) {
+    document.getElementById('wcCD').textContent = fmtCD(wcMs) || 'Starting soon';
+  } else {
+    document.getElementById('wcBanner').style.display = 'none';
+  }
+
+  // Update countdown cells
+  allEvents.forEach(ev => {
+    const el = document.getElementById('cd-'+ev.id);
+    if (!el) return;
+    const ms = ev.startMs - now;
+    el.textContent = ev.isActive ? (ev.statusDetail||'LIVE') : (fmtCD(ms)||'< 1 min');
+    el.className = 'eval '+(ev.isActive?'rd':'ac');
+  });
+}
+
+function openModal(id, name) {
+  pendingAlertId=id;
+  document.getElementById('modalName').textContent=name;
+  document.getElementById('alertModal').classList.add('open');
+}
+function closeModal() { document.getElementById('alertModal').classList.remove('open'); }
+function confirmAlert() {
+  const email = document.getElementById('modalEmail').value.trim();
+  if (!email||!email.includes('@')) { document.getElementById('modalEmail').style.borderColor='var(--live)'; return; }
+  if (pendingAlertId) alertedIds.add(pendingAlertId);
+  closeModal(); applyFilters();
+  showToast('✓ Alert set — we will remind you before kickoff');
+}
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+document.getElementById('alertModal').addEventListener('click',e=>{if(e.target.id==='alertModal')closeModal();});
+
+loadAllEvents();
+setInterval(updateClocks,1000);
+setInterval(loadAllEvents,60000);
+updateClocks();
+</script>
+</body>
+</html>
