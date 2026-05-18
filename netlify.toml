@@ -1,10 +1,2 @@
-[build]
-functions = "netlify/functions"
-publish = "."
-
-[[functions]]
+[functions]
 node_bundler = "esbuild"
-
-[[scheduled]]
-function = "send-reminders"
-cron = "*/5 * * * *"
